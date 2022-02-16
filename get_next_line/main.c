@@ -2,16 +2,20 @@
 
 int main()
 {
-	int fd;
-	char *line;	
+	// int		fd;
+	char	*line;
+	// int		i;
 
-	line = "hello";
-	fd = open("testfile.txt", O_RDONLY);
-
+	// i = 0;
+	line = malloc(2);
+	line[0] = 'a';
+	line[1] = 0;
+	// fd = open("testfile.txt", O_RDONLY);
 	while (line)
 	{
-		line = get_next_line(fd);
-		printf("%s",line);
 		free(line);
+		line = get_next_line(1/*fd*/);
+		printf("%s", line);
 	}
+	free(line);
 }

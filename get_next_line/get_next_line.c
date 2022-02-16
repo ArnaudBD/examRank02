@@ -1,109 +1,113 @@
 #include "get_next_line.h"
-#include <unistd.h>
-#define BUFFER_SIZE 5
 
-int strlen(char *str)
+int	ft_strlen(char *s)
 {
 	int i;
 
+	if (!s)
+		return (0);
 	i = 0;
-	while(str[i])
+	while (s[i])
 	{
 		i++;
 	}
-	return i;
+	return (i);
 }
 
-
-strjoin(char * s1, char *s2)
+int	nl_find(char *buff)
 {
-	int i;
-	int j;
-	int len1;
-	int len2;
-	int len;
-	char *str;
+	int	i;
 
-	len1 = strlen(s1);
-	len2 = strlen(s2);
-	len = len1 + len2;
-	str = malloc(sizeof(char *) * len + 1);
-	str[len] = 0;
 	i = 0;
-	while (s1[i])
+	while (buff && buff[i])
 	{
-		str[i] = s1[i];
+		if (buff[i] == '\n')
+			return (i + 1);
+		i++;
+	}
+	return (0);
+}
+
+void	update_buff(char *buff)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = nl_find(buff);
+	if (!j)
+	{
+		buff[0] = 0;
+		return ;
+	}
+	while (buff[j])
+	{
+		buff[i] = buff[j];
+		i++;
+		j++;
+	}
+	buff[i] = 0;
+	return ;
+}
+
+char	*nl_strjoin(char *line, char *buff)
+{
+	char	*new_line;
+	int		i;
+	int		j;
+
+	if (!nl_find(buff))
+		new_line = malloc(sizeof(char *) * (ft_strlen(line) + ft_strlen(buff) + 1));
+	else
+		new_line = malloc(sizeof(char *) * (ft_strlen(line) + nl_find(buff) + 1));
+	i = 0;
+	while (line && line[i])
+	{
+		new_line[i] = line[i];
 		i++;
 	}
 	j = 0;
-	while (s2[j])
+	while(buff[j] && buff[j] != '\n')
 	{
-		str[i] = s2[j];
+		new_line[i] = buff[j];
+		i++;
 		j++;
 	}
-	free(s1);
-	return str;
-}
-
-char *buff(char *buff)
-{
-	int i;
-	char *str;
-
-	len = strlen(buff);
-	str = malloc(sizeof(char *) * (len + BUFFER_SIZE) + 1);
-	i = 0;
-	while (i <= len)
+	if (buff[j] == '\n')
 	{
-		str[i] = buff[i];
+		new_line[i] = buff[j];
 		i++;
 	}
-	return str;
+	new_line[i] = 0;		
+	return (new_line);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static char *buff;
-	char *line;
-	char *tmp;
-	int i;
-	int j;
+	static char buff[BUFFER_SIZE + 1];
+	char 		*line;
+	char		*tmp;
+	int			r;
 
-	tmp = malloc(sizeof(char *) * BUFFER_SIZE + 2);
-	buff = malloc(sizeof(char *) * BUFFER_SIZE + 2);
-	if (fd < 0 || !buff)
-		return NULL;
-	buff[BUFFER_SIZE + 1] = 0;
-	while (read(1, buff, BUFFER_SIZE) == BUFFER_SIZE)
+	if (read(fd, buff, 0) == -1)
+		return (NULL);
+	line = NULL;
+	if (buff[0])
+		line = nl_strjoin(line, buff); 
+		
+	while (!nl_find(buff))
 	{
-		strjoin(line, buff);
-		i = 0;
-		while(buff[i] != 0)
+		r = read(fd, buff, BUFFER_SIZE);
+		if (r == 0)
 		{
-			line[i] = buff[i];
-			if (buff[i] == '\n')
-			{
-				i++;
-				j = 0;
-				while (buff[i])
-				{
-					tmp[j] = buff[i];
-					i++;
-					j++;
-				}
-				tmp[j] = buff[i];
-				free(tmp);
-				return line;
-			}
-			i++;
+			update_buff(buff);
+			return (line);
 		}
-		buff = addspace(buff);
+		buff[r] = 0;
+		tmp = line;
+		line = nl_strjoin(line, buff);
+		free(tmp);
 	}
-	while(buff[i])
-	{
-		line[i] = buff[i];
-		i++;
-	}
-	free(buff);
-	return line;
+	update_buff(buff);
+	return (line);	
 }
