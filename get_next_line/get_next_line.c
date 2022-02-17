@@ -1,4 +1,5 @@
 #include "get_next_line.h"
+#include <limits.h>
 
 int	ft_strlen(char *s)
 {
@@ -89,7 +90,7 @@ char	*get_next_line(int fd)
 	char		*tmp;
 	int			r;
 
-	if (read(fd, buff, 0) == -1)
+	if (read(fd, buff, 0) == -1 || fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > SSIZE_MAX)
 		return (NULL);
 	line = NULL;
 	if (buff[0])

@@ -44,8 +44,8 @@ int main()
 	i = -200;
 	x = 200;
 	s = "%neg%";
-	res1 = ft_printf("ft_printf == |%s, %d, %x|\n", s, i, x);
-	res2 = printf("   printf == |%s, %d, %x|\n", s, i, x);
+	res1 = ft_printf("ft_printf == |%s%d%x|\n", s, i, x);
+	res2 = printf("   printf == |%s%d%x|\n", s, i, x);
 
 	printf("res1 == %d\nres2 == %d\n", res1, res2);
 	return 0;

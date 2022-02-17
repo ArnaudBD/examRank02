@@ -76,9 +76,12 @@ int	ft_printf(const char *str, ...)
 				i++;
 			}
 		}
-		write(1, &str[i], 1);
-		count++;
-		i++;
+		else
+		{
+			write(1, &str[i], 1);
+			count++;
+			i++;
+		}
 	}
 	va_end(ap);
 	return (count);
