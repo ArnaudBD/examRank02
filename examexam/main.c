@@ -2,18 +2,19 @@
 
 int main()
 {
-	int		fd;
-	char	*line;
+	int fd;
+	char *line;
 
+	fd = open("testfile", O_RDONLY);
 	line = malloc(2);
-	line[0] = 'a';
-	line[1] = 0;
-	fd = open("/tmp/longfile", O_RDONLY);
+	line = "a";
+
 	while (line)
 	{
-		free(line);
+		line = NULL;
 		line = get_next_line(fd);
 		printf("%s", line);
 	}
 	free(line);
+	return 0;
 }
